@@ -45,6 +45,9 @@ def set_romantic_theme():
             color: #e75480;
             font-size: 24px;
         }
+        .audio-container {
+            display: none; /* لإخفاء مشغل الصوت الافتراضي */
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -80,12 +83,12 @@ if st.session_state.show_image:
         image_path = "WhatsApp Image 2025-05-18 at 3.15.07 PM.jpeg"
         if os.path.exists(image_path):
             image = Image.open(image_path)
-            st.image(image, caption='رنوشتي حبيبتي', use_container_width=True)  # تم تغيير use_column_width إلى use_container_width
+            st.image(image, caption='رنوشتي حبيبتي', use_column_width=True)
         else:
             st.error("لم يتم العثور على الصورة المطلوبة")
         
         # تشغيل أغنية رومانسية في الخلفية
-        audio_path = r"/romantic_song.m4a"
+        audio_path = "assets/romantic_song.m4a"
         if os.path.exists(audio_path):
             # قراءة الملف الصوتي
             with open(audio_path, 'rb') as audio_file:            
@@ -107,32 +110,35 @@ if st.session_state.show_image:
 بس متبقيش زعلانة.. أنا هنا.. دايمًا جنبك..
                         
 "إنتي حبيبتي، غرامي، وعمري كله".. ❤️ </h2>''', unsafe_allow_html=True)
+            # JavaScript لتشغيل الصوت تلقائياً من الثانية 34
+
 
             st.markdown('<h2 style="text-align: center; color: #5d001e;"> الاغنيه دي اقل حاجه ممكن تعبر عن الي جوايا وكل كلمه بجد فيها جوايا  </h2>', unsafe_allow_html=True)
-            
-            # تحويل الملف الصوتي إلى base64
-            audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-            
-            # JavaScript لتشغيل الصوت تلقائياً من الثانية 34
             autoplay_audio = f"""
             <audio id="romanticAudio" controls autoplay style="display:none">
-                <source src="data:audio/m4a;base64,{audio_base64}" type="audio/m4a">
+                <source src="data:audio/m4a;base64,{base64.b64encode(audio_bytes).decode()}" type="audio/m4a">
             </audio>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {{
                     var audio = document.getElementById('romanticAudio');
-                    audio.currentTime = 34;
-                    function playAudio() {{
-                        audio.play().catch(e => console.log('Play error:', e));
-                    }}
-                    document.body.addEventListener('click', playAudio, {{ once: true }});
-                    setTimeout(playAudio, 1000);
+                    audio.currentTime = 34; // البدء من الثانية 34
+                    audio.play();
                 }});
             </script>
             """
             st.markdown(autoplay_audio, unsafe_allow_html=True)
             
             # مشغل صوتي ظاهر للتحكم إذا لزم الأمر
+            st.markdown('''
+            <style>
+            .stAudio {
+                width: 100%;
+                max-width: 600px;
+                margin: 20px auto;
+            }
+            </style>
+            ''', unsafe_allow_html=True)
+            
             st.audio(audio_bytes, format='audio/m4a', start_time=34)
 
         else:
